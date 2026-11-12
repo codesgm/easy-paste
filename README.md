@@ -1,14 +1,86 @@
-# Clipboard History (Super+V)
+# Easy Paste — histórico de área de transferência
 
 <img src="icon.png" alt="" width="112" align="right">
 
 A GNOME Shell extension that brings a Windows-style clipboard history panel to GNOME. Open a searchable list of everything you have copied — text and images alike — then pick an entry and have it pasted straight into the application you were working in.
+
+### Local fork: open at the mouse pointer
+
+The panel opens next to the mouse pointer, both from the configured shortcut
+and from the top-bar icon. Its position is captured once per opening; moving
+the mouse afterwards does not move the panel. GNOME's native popup positioning
+keeps it within the monitor work area when space permits and flips it above
+the pointer near the bottom edge. The height limit uses the pointer's monitor.
 
 The extension reads the system clipboard whenever its contents change, and keeps that history locally in `~/.cache/clipboard-history@manouchehr/`. Nothing is sent over the network.
 
 **No keyboard shortcut is set by default.** extensions.gnome.org forbids shipping one for clipboard interaction, so assign your own under [Preferences](#preferences). See [The Super+V shortcut](#the-superv-shortcut) if you want the Windows-style binding.
 
 Written against the modern ESM extension API for **GNOME Shell 46–50**, and tested on **Wayland** under **Arch Linux**.
+
+## Instalação no Ubuntu
+
+Este fork abre o histórico na posição do mouse. Baseado no projeto
+[Clipboard History, de Manouchehr Ghalevand](https://github.com/M-ghalevand/gnome-shell-extension-clipboard-history), sob licença GPL-2.0-or-later.
+
+### 1. Verifique a compatibilidade e instale as ferramentas
+
+Compatível com GNOME Shell **46 a 50**. Confira sua versão:
+
+```bash
+gnome-shell --version
+sudo apt update
+sudo apt install git gnome-shell-extension-prefs libglib2.0-bin
+```
+
+### 2. Baixe, empacote e instale
+
+```bash
+git clone https://github.com/codesgm/easy-paste.git
+cd easy-paste
+gnome-extensions pack . --force --extra-source=LICENSE --extra-source=icon.svg
+gnome-extensions install --force clipboard-history@manouchehr.shell-extension.zip
+glib-compile-schemas "$HOME/.local/share/gnome-shell/extensions/clipboard-history@manouchehr/schemas/"
+```
+
+O fork mantém o identificador original, portanto substitui a extensão Clipboard
+History se ela já estiver instalada. Os comandos de instalação normalmente não
+exibem mensagem quando terminam com sucesso.
+
+### 3. Recarregue e ative
+
+No **Wayland**, saia da sessão do Ubuntu e entre novamente. No **X11**, pressione
+**Alt + F2**, digite `r` e pressione Enter. Para descobrir sua sessão, execute
+`echo "$XDG_SESSION_TYPE"`.
+
+Depois de recarregar:
+
+```bash
+gnome-extensions enable clipboard-history@manouchehr
+gnome-extensions prefs clipboard-history@manouchehr
+```
+
+### 4. Configure o atalho Super + V
+
+Nas preferências, defina o atalho de abertura para **Super + V** (Super é a tecla
+com o símbolo do Windows). Se ele abrir as notificações, libere a combinação,
+mantendo **Super + M** para as notificações:
+
+```bash
+gsettings set org.gnome.shell.keybindings toggle-message-tray "['<Super>m']"
+```
+
+Copie alguns textos, mova o mouse e pressione **Super + V**. Escolha um item para
+colar. O painel também abre pelo ícone superior e permanece no lugar enquanto
+estiver aberto. **Esc** ou um clique fora fecha o painel.
+
+### Atualizar este fork
+
+Dentro da pasta do projeto, execute `git pull` e repita os comandos de
+empacotamento, instalação e compilação do passo 2. Recarregue a sessão conforme
+o passo 3 para carregar o código novo.
+
+---
 
 ## Features
 
@@ -55,7 +127,7 @@ The installed directory name must match the UUID exactly: `clipboard-history@man
 
 ```bash
 # Copy the checkout in under its UUID
-cp -r gnome-shell-extension-clipboard-history ~/.local/share/gnome-shell/extensions/clipboard-history@manouchehr
+cp -r easy-paste ~/.local/share/gnome-shell/extensions/clipboard-history@manouchehr
 
 # Compile the GSettings schema (required for preferences to work)
 glib-compile-schemas ~/.local/share/gnome-shell/extensions/clipboard-history@manouchehr/schemas/

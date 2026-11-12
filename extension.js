@@ -528,10 +528,42 @@ const HistoryItem = GObject.registerClass({
 // ClipboardHistoryIndicator — panel button and main menu
 // ----------------------------------------------------------------------
 
+// Keep the normal PopupMenu grab, keyboard handling and BoxPointer edge
+// avoidance, but anchor it to a snapshot of the pointer instead of the panel.
+class PointerPopupMenu extends PopupMenu.PopupMenu {
+    constructor(anchor) {
+        super(anchor, 0, St.Side.TOP);
+    }
+
+    open(animate) {
+        if (this.isOpen)
+            return;
+
+        const [x, y] = global.get_pointer();
+        this.sourceActor.set_position(x, y);
+        // Resolve the new allocation before the menu reads the anchor's
+        // monitor and transformed extents (not its previous opening position).
+        this.sourceActor.get_allocation_box();
+        super.open(animate);
+    }
+}
+
 const ClipboardHistoryIndicator = GObject.registerClass(
 class ClipboardHistoryIndicator extends PanelMenu.Button {
     _init(extension) {
-        super._init(0.5, 'Clipboard History', false);
+        super._init(0.5, 'Clipboard History', true);
+
+        // An invisible, non-reactive actor remains mapped so BoxPointer can
+        // measure it and choose the monitor containing the pointer. Add it
+        // before the menu so its allocation is updated first.
+        this._pointerAnchor = new St.Widget({
+            width: 1,
+            height: 1,
+            reactive: false,
+            can_focus: false,
+        });
+        Main.uiGroup.add_child(this._pointerAnchor);
+        this.setMenu(new PointerPopupMenu(this._pointerAnchor));
 
         this._extension = extension;
         this._settings = extension.getSettings();
@@ -551,6 +583,21 @@ class ClipboardHistoryIndicator extends PanelMenu.Button {
     }
 
     // -------------------- Menu construction --------------------
+
+    _onOpenStateChanged(menu, isOpen) {
+        super._onOpenStateChanged(menu, isOpen);
+
+        // PanelMenu uses the primary monitor for its height limit. This menu
+        // belongs to the monitor at the pointer, which may have another scale
+        // or resolution.
+        if (isOpen) {
+            const monitor = Main.layoutManager.findIndexForActor(this._pointerAnchor);
+            const workArea = Main.layoutManager.getWorkAreaForMonitor(monitor);
+            const scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+            const margins = menu.actor.margin_top + menu.actor.margin_bottom;
+            menu.actor.style = `max-height: ${Math.floor((workArea.height - margins) / scale)}px;`;
+        }
+    }
 
     _buildMenu() {
         this._buildTabBar();
@@ -986,6 +1033,8 @@ class ClipboardHistoryIndicator extends PanelMenu.Button {
         this._watcher = null;
         this._store = null;
         super.destroy();
+        this._pointerAnchor.destroy();
+        this._pointerAnchor = null;
     }
 });
 

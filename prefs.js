@@ -47,8 +47,7 @@ export default class ClipboardHistoryPreferences extends ExtensionPreferences {
         shortcutGroup.add(this._buildShortcutRow(
             settings, 'toggle-shortcut',
             'Toggle clipboard panel',
-            'No shortcut is set by default. Super+V is the usual choice, but GNOME '
-            + 'assigns it to the message tray, so free it there first.'
+            "Defaults to Ctrl + apostrophe ('). Click Change to choose another shortcut."
         ));
 
         // ---------------- History group ----------------

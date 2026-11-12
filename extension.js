@@ -1058,8 +1058,7 @@ export default class ClipboardHistoryExtension extends Extension {
         this._indicator = new ClipboardHistoryIndicator(this);
         Main.panel.addToStatusArea(this.uuid, this._indicator);
 
-        // 'toggle-shortcut' ships empty, so this registers no accelerator until
-        // the user sets one; Main.wm.addKeybinding tracks the key from there on.
+        // Ctrl + apostrophe is the default; user preferences override it.
         Main.wm.addKeybinding(
             'toggle-shortcut',
             this._settings,

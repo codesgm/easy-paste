@@ -16,11 +16,9 @@
          (an array of accelerator strings), exactly like the built-in
          gnome-shell keybindings.
 
-         The default is deliberately empty: extensions.gnome.org forbids
-         shipping a default keyboard shortcut for interacting with clipboard
-         data, so the user assigns one in the preferences. -->
+         This fork defaults to Ctrl + apostrophe. -->
     <key name="toggle-shortcut" type="as">
-      <default>[]</default>
+      <default>['&lt;Control&gt;apostrophe']</default>
       <summary>Toggle the clipboard history popup</summary>
       <description>
         Keybinding used to open and close the clipboard history panel.

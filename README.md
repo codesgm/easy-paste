@@ -14,7 +14,7 @@ the pointer near the bottom edge. The height limit uses the pointer's monitor.
 
 The extension reads the system clipboard whenever its contents change, and keeps that history locally in `~/.cache/clipboard-history@manouchehr/`. Nothing is sent over the network.
 
-**No keyboard shortcut is set by default.** extensions.gnome.org forbids shipping one for clipboard interaction, so assign your own under [Preferences](#preferences). See [The Super+V shortcut](#the-superv-shortcut) if you want the Windows-style binding.
+**Atalho padrão: Ctrl + ' (apóstrofo).** Você pode alterá-lo nas preferências.
 
 Written against the modern ESM extension API for **GNOME Shell 46–50**, and tested on **Wayland** under **Arch Linux**.
 
@@ -60,19 +60,19 @@ gnome-extensions enable clipboard-history@manouchehr
 gnome-extensions prefs clipboard-history@manouchehr
 ```
 
-### 4. Configure o atalho Super + V
+### 4. Use o atalho Ctrl + '
 
-Nas preferências, defina o atalho de abertura para **Super + V** (Super é a tecla
-com o símbolo do Windows). Se ele abrir as notificações, libere a combinação,
-mantendo **Super + M** para as notificações:
+Copie alguns textos, mova o mouse e pressione **Ctrl + '** (apóstrofo).
+Escolha um item para colar. O painel também abre pelo ícone superior e permanece
+no lugar enquanto estiver aberto. **Esc** ou um clique fora fecha o painel.
+
+Você pode escolher outro atalho nas preferências. Configurações anteriores são
+preservadas ao atualizar. Para aplicar o novo padrão caso já tenha personalizado
+o atalho, execute:
 
 ```bash
-gsettings set org.gnome.shell.keybindings toggle-message-tray "['<Super>m']"
+gsettings --schemadir "$HOME/.local/share/gnome-shell/extensions/clipboard-history@manouchehr/schemas" reset org.gnome.shell.extensions.clipboard-history toggle-shortcut
 ```
-
-Copie alguns textos, mova o mouse e pressione **Super + V**. Escolha um item para
-colar. O painel também abre pelo ícone superior e permanece no lugar enquanto
-estiver aberto. **Esc** ou um clique fora fecha o painel.
 
 ### Atualizar este fork
 
@@ -165,7 +165,7 @@ Once enabled, a small clipboard icon appears in the top panel and toggles the hi
 
 ## The Super+V shortcut
 
-No shortcut ships with the extension, and it never modifies keybindings it does not own. To get the Windows-style binding you need two steps, both of them yours to make.
+This fork defaults to Ctrl + apostrophe. If you prefer Super+V, follow the optional steps below.
 
 GNOME binds both **Super+V** and **Super+M** to `toggle-message-tray` out of the box, so first free Super+V:
 
